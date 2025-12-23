@@ -1,0 +1,345 @@
+'use client';
+
+import { AnimatePresence, motion } from 'framer-motion';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+import PromptCard from './PromptCard';
+import { useEffect, useRef, useState } from 'react';
+
+function FloatingPaths({ position }: { position: number }) {
+  const paths = Array.from({ length: 36 }, (_, i) => ({
+    id: i,
+    d: `M-${380 - i * 5 * position} -${189 + i * 6}C-${
+      380 - i * 5 * position
+    } -${189 + i * 6} -${312 - i * 5 * position} ${216 - i * 6} ${
+      152 - i * 5 * position
+    } ${343 - i * 6}C${616 - i * 5 * position} ${470 - i * 6} ${
+      684 - i * 5 * position
+    } ${875 - i * 6} ${684 - i * 5 * position} ${875 - i * 6}`,
+    color: `rgba(59,130,246,${0.1 + i * 0.03})`, // blue shades
+    width: 0.5 + i * 0.03,
+  }));
+
+  return (
+    <div className="absolute inset-0 pointer-events-none">
+      <svg
+        className="w-full h-full"
+        viewBox="0 0 696 316"
+        fill="none"
+      >
+        <title>Background Paths</title>
+        {paths.map((path) => (
+          <motion.path
+            key={path.id}
+            d={path.d}
+            stroke={path.color} // use blue shades
+            strokeWidth={path.width}
+            strokeOpacity={0.1 + path.id * 0.03}
+            initial={{ pathLength: 0.3, opacity: 0.6 }}
+            animate={{
+              pathLength: 1,
+              opacity: [0.3, 0.6, 0.3],
+              pathOffset: [0, 1, 0],
+            }}
+            transition={{
+              duration: 20 + Math.random() * 10,
+              repeat: Number.POSITIVE_INFINITY,
+              ease: 'linear',
+            }}
+          />
+        ))}
+      </svg>
+    </div>
+  );
+}
+
+export interface BackgroundPathsProps {
+  title?: string;
+}
+
+export function BackgroundPaths({ title = 'Background Paths' }: BackgroundPathsProps) {
+  const words = title.split(' ');
+
+  const topLines = [
+    "Kindling",
+    "Keeping",
+    "Krafting",
+    "Kultivating",
+    "Konnecting",
+  ];
+  const bottomLines = [
+    "Intelligence Through Data",
+    "Innovation Over a Decade",
+    "The Power of AI",
+    "Smarter Learning with ML",
+    "The Future",
+  ];
+
+  const [index, setIndex] = useState(0);
+  const [wordWidth, setWordWidth] = useState(0);
+  const wordRefs = useRef([]);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Check if mobile for responsive positioning
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  // Measure word width when index changes
+  useEffect(() => {
+    if (wordRefs.current[index]) {
+      const width = wordRefs.current[index].offsetWidth + 100;
+      setWordWidth(width);
+    }
+  }, [index]);
+
+  // Only forward animation (top → bottom)
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setIndex((prev) => (prev + 1) % topLines.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const letters = topLines[index].split("");
+  const letterDuration = 2.0 / letters.length;
+
+  return (
+    <div className="relative min-h-screen w-full flex items-center justify-center overflow-hidden ">
+      <div className="absolute inset-0">
+        <FloatingPaths position={1} />
+        <FloatingPaths position={-2} />
+      </div>
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 container mx-auto">
+         
+      <div className="text-center space-y-4 max-w-5xl px-4 z-10 mx-auto ">
+          <div className="max-w-[1200px] flex flex-col items-center gap-0 relative w-full overflow-hidden ">
+            <div className="relative flex items-center justify-center w-full h-[130px] ml-60 overflow-hidden">
+              <div className="min-h-screen flex items-center justify-center ">
+                {/* SVG Icon with animation */}
+
+                <motion.div
+                  className="relative z-70"
+                  initial={{ x: 0 }}
+                  animate={{ x: wordWidth }}
+                  transition={{
+                    duration: 2,
+                    ease: "linear",
+                  }}
+                  key={`${index}-${wordWidth}`}
+                >
+                  <motion.svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="74"
+                    height="75"
+                    viewBox="0 0 74 75"
+                    fill="none"
+                    initial={{ rotate: 0 }}
+                    animate={{ rotate: 360 }}
+                    transition={{
+                      duration: 2,
+                      ease: "linear",
+                    }}
+                    style={{
+                      transformOrigin: "center",
+                      transformBox: "fill-box",
+                    }}
+                  >
+                    <path
+                      d="M56.627 68.6263C50.9369 72.2107 44.2064 74.2838 36.9935 74.2838C16.5626 74.2838 0 57.6548 0 37.1419C0 25.1267 5.68234 14.4438 14.4962 7.6549L56.627 68.6263Z"
+                      fill="url(#paint0_linear_949_264)"
+                    />
+                    <path
+                      d="M73.9005 39.6901C73.233 49.5818 68.7086 58.4109 61.8243 64.6735L43.9754 38.8426L73.9005 39.6901Z"
+                      fill="url(#paint1_linear_949_264)"
+                    />
+                    <path
+                      d="M53.6983 3.99413C64.6125 9.54956 72.4128 20.3784 73.7741 33.1419L43.3589 32.2805L53.6983 3.99413Z"
+                      fill="url(#paint2_linear_949_264)"
+                    />
+                    <path
+                      d="M36.9935 0C40.6974 0 44.274 0.547052 47.648 1.56415L37.4654 29.4212L19.9986 4.14329C25.0875 1.49599 30.8664 0 36.9935 0Z"
+                      fill="url(#paint3_linear_949_264)"
+                    />
+                    <defs>
+                      <linearGradient
+                        id="paint0_linear_949_264"
+                        x1="-3.23924e-07"
+                        y1="36.7322"
+                        x2="89.0029"
+                        y2="87.7271"
+                        gradientUnits="userSpaceOnUse"
+                      >
+                        <stop stopColor="#054FF3" />
+                        <stop offset="0.423077" stopColor="#388EFF" />
+                        <stop offset="1" stopColor="#1E73F3" />
+                      </linearGradient>
+                      <linearGradient
+                        id="paint1_linear_949_264"
+                        x1="-3.23924e-07"
+                        y1="36.7322"
+                        x2="89.0029"
+                        y2="87.7271"
+                        gradientUnits="userSpaceOnUse"
+                      >
+                        <stop stopColor="#054FF3" />
+                        <stop offset="0.423077" stopColor="#388EFF" />
+                        <stop offset="1" stopColor="#1E73F3" />
+                      </linearGradient>
+                      <linearGradient
+                        id="paint2_linear_949_264"
+                        x1="-3.23924e-07"
+                        y1="36.7322"
+                        x2="89.0029"
+                        y2="87.7271"
+                        gradientUnits="userSpaceOnUse"
+                      >
+                        <stop stopColor="#054FF3" />
+                        <stop offset="0.423077" stopColor="#388EFF" />
+                        <stop offset="1" stopColor="#1E73F3" />
+                      </linearGradient>
+                      <linearGradient
+                        id="paint3_linear_949_264"
+                        x1="-3.23924e-07"
+                        y1="36.7322"
+                        x2="89.0029"
+                        y2="87.7271"
+                        gradientUnits="userSpaceOnUse"
+                      >
+                        <stop stopColor="#054FF3" />
+                        <stop offset="0.423077" stopColor="#388EFF" />
+                        <stop offset="1" stopColor="#1E73F3" />
+                      </linearGradient>
+                    </defs>
+                  </motion.svg>
+                </motion.div>
+
+                <div
+                  className="relative min-w-[340px] sm:min-w-[420px] md:min-w-[600px] overflow-visible flex items-center"
+                  style={{ overflow: "visible", whiteSpace: "nowrap" }}
+                >
+                  {/* Hidden span to measure word width */}
+                  <span
+                    ref={(el) => (wordRefs.current[index] = el)}
+                    className="absolute font-[400] text-[clamp(40px,5vw,72px)] tracking-tight leading-[-1.651px] opacity-0 pointer-events-none"
+                    style={{
+                      fontFamily: "Bw Gradual DEMO",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    {topLines[index]}
+                  </span>
+
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={index}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.1 }}
+                      className="flex"
+                    >
+                      {letters.map((letter, letterIndex) => (
+                        <motion.span
+                          key={letterIndex}
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          transition={{
+                            duration: 0.1,
+                            delay: 0.4 + letterIndex * letterDuration,
+                          }}
+                          className="font-[400] text-[clamp(40px,5vw,72px)] z-0 tracking-tight leading-[-1.651px] bg-clip-text text-transparent"
+                          style={{
+                            background:
+                              "linear-gradient(90deg, #0550F1 0%, #0455E7 100%)",
+                            WebkitBackgroundClip: "text",
+                            fontFamily: "Bw Gradual DEMO",
+                          }}
+                        >
+                          {letter}
+                        </motion.span>
+                      ))}
+                    </motion.div>
+                  </AnimatePresence>
+                </div>
+              </div>
+            </div>
+
+            <div className="relative h-[70px]  border-r-amber-100 overflow-hidden flex items-center justify-center">
+              <AnimatePresence mode="wait">
+                <motion.span
+                  key={index}
+                  initial={{ y: -60, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  exit={{ y: 60, opacity: 0 }}
+                  transition={{ duration: 0.6, ease: "easeInOut", delay: 0.5 }}
+                  className="font-bold text-black text-center text-[43px]"
+                  style={{
+                    fontFamily: "Bw Gradual DEMO",
+                    whiteSpace: "nowrap",
+                    overflow: "visible",
+                  }}
+                >
+                  {bottomLines[index]}
+                </motion.span>
+              </AnimatePresence>
+            </div>
+          </div>
+
+          <div className="ml-130 mt-[-30]">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="248"
+              height="24"
+              viewBox="0 0 257 33"
+              fill="none"
+              className="flex-shrink-0"
+            >
+              <path
+                d="M4.50085 28.4996C52.6287 19.1244 169.608 1.29854 252.501 4.99728"
+                stroke="url(#paint0_linear_0_657)"
+                strokeWidth="9"
+                strokeLinecap="round"
+              />
+              <defs>
+                <linearGradient
+                  id="paint0_linear_0_657"
+                  x1="4.50085"
+                  y1="16.4996"
+                  x2="252.501"
+                  y2="16.4996"
+                  gradientUnits="userSpaceOnUse"
+                >
+                  <stop stopColor="#0367FC" />
+                  <stop offset="0.275" stopColor="#3282FA" />
+                  <stop offset="0.635" stopColor="#DAF9A7" />
+                  <stop offset="1" stopColor="#C9FD74" />
+                </linearGradient>
+              </defs>
+            </svg>
+          </div>
+
+          <div className="text-center text-[#202020] font-[SF Pro] flex flex-col space-y-1">
+            <h2 className="text-[22px] font-bold m-[-5px]">
+              Got an idea? Let's bring it to life
+            </h2>
+            <p className="text-[20px] font-normal m-0">
+              through tailored solutions or ready-to-launch MVPs.
+            </p>
+            <div className="mt-7">
+              <PromptCard />
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  );
+}

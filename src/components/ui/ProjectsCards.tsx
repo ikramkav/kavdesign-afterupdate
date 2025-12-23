@@ -1,0 +1,620 @@
+"use client";
+import React from "react";
+import { AlertTriangle } from "lucide-react";
+import Image from "next/image";
+import { motion } from "framer-motion";
+
+// --- Types ---
+interface LeftCardProps {
+  id: string;
+  type: "brand" | "problem" | "industry";
+  title: string;
+  subtitle?: string;
+  content?: string;
+  flag?: string;
+}
+
+interface ResultCardProps {
+  id: string;
+  title: string;
+  content: string;
+  isActive?: boolean;
+}
+
+interface TechItemProps {
+  id: string;
+  name: string;
+  icon: React.ReactNode;
+  position: string; // Tailwind class for absolute positioning
+}
+
+// --- Data Configuration ---
+
+const projectsData = [
+  {
+    id: "p1",
+    leftSectionData: [
+      {
+        id: "l1",
+        type: "brand",
+        title: "Chemco",
+        subtitle: "Established in 1984, trusted globally.",
+      },
+      {
+        id: "l2",
+        type: "problem",
+        title: "Client Problem",
+        content: "Medication tracking is slow and risky.",
+      },
+      {
+        id: "l3",
+        type: "industry",
+        title: "Medical Industry",
+        content: "Advanced healthcare integrations.",
+      },
+    ],
+    resultsData: [
+      {
+        id: "r1",
+        title: "Results",
+        content: "Fully digital operations.",
+      },
+      {
+        id: "r2",
+        title: "Results",
+        content: "Transparent collaboration.",
+        isActive: true,
+      },
+      {
+        id: "r3",
+        title: "Results",
+        content: "Error-free patient care.",
+      },
+    ],
+  },
+
+  {
+    id: "p2",
+    leftSectionData: [
+      {
+        id: "l1",
+        type: "brand",
+        title: "MediPlus",
+        subtitle: "Innovating healthcare software.",
+      },
+      {
+        id: "l2",
+        type: "problem",
+        title: "Client Problem",
+        content: "Data scattered across systems.",
+      },
+      {
+        id: "l3",
+        type: "industry",
+        title: "Health Tech",
+        content: "Unified digital solutions.",
+      },
+    ],
+    resultsData: [
+      {
+        id: "r1",
+        title: "Results",
+        content: "Centralized platform.",
+      },
+      {
+        id: "r2",
+        title: "Results",
+        content: "Faster decision making.",
+        isActive: true,
+      },
+      {
+        id: "r3",
+        title: "Results",
+        content: "Lower operational cost.",
+      },
+    ],
+  },
+];
+
+const techStackData: TechItemProps[] = [
+  {
+    id: "t1",
+    name: "CSS",
+    icon: (
+      <img
+        src="/images/projectcards/css.png"
+        alt="CSS"
+        className="w-[42px] h-[42px]"
+      />
+    ),
+    position: "top-[10%] left-[50%] -translate-x-1/2",
+  },
+  {
+    id: "t2",
+    name: "JS",
+    icon: (
+      <img
+        src="/images/projectcards/jslogo.png"
+        alt="CSS"
+        className="w-[42px] h-[42px]"
+      />
+    ),
+    position: "top-[25%] right-[15%]",
+  },
+  {
+    id: "t3",
+    name: "MySQL",
+    icon: (
+      <img
+        src="/images/projectcards/mysql.png"
+        alt="CSS"
+        className="w-[42px] h-[42px]"
+      />
+    ),
+    position: "bottom-[30%] right-[10%]",
+  },
+  {
+    id: "t4",
+    name: "HTML",
+    icon: (
+      <img
+        src="/images/projectcards/html5.png"
+        alt="CSS"
+        className="w-[42px] h-[42px]"
+      />
+    ),
+    position: "bottom-[10%] left-[50%] -translate-x-1/2",
+  },
+  {
+    id: "t5",
+    name: "Laravel",
+    icon: (
+      <img
+        src="/images/projectcards/Laravel.png"
+        alt="CSS"
+        className="w-[42px] h-[42px]"
+      />
+    ),
+    position: "bottom-[25%] left-[15%]",
+  },
+  {
+    id: "t6",
+    name: "Stripe",
+    icon: (
+      <img
+        src="/images/projectcards/Stripe.png"
+        alt="CSS"
+        className="w-[63px] h-[40px] aspect-[9/5]"
+      />
+    ),
+    position: "top-[25%] left-[15%]",
+  },
+];
+
+const containervarients = {
+  hidden: {},
+  visible: {
+    transition: {
+      staggerChildren: 1.3,
+    },
+  },
+};
+
+const leftColumn = {
+  hidden: {
+    x: "30vw",
+    opacity: 1,
+  },
+  visible: {
+    x: ["30vw", "30vw", 0],
+    opacity: 1,
+    transition: {
+      duration: 0.99,
+      times: [0, 0.5, 0.99],
+      ease: "easeInOut",
+    },
+  },
+};
+
+const centerColumn = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      type: "spring",
+      stiffness: 100,
+    },
+  },
+};
+
+const rightColumn = {
+  hidden: { x: "50vw", opacity: 0 },
+  visible: {
+    x: 0,
+    opacity: 1,
+    transition: {
+      type: "spring",
+      stiffness: 50,
+      damping: 12,
+    },
+  },
+};
+
+// --- Main Component ---
+export function ProjectCard({ leftSectionData, resultsData }) {
+  return (
+    <div className="flex items-center justify-center min-h-screen bg-gray-100 p-8">
+      {/* Main Container Card */}
+      
+      <div className="w-full max-w-[1232px]  rounded-[40px] p-12  relative overflow-hidden">
+        <Image
+          src="/images/projectcards/cardbg.png"
+          alt="card background"
+          fill
+          className="object-cover"
+          priority
+        />
+        {/* Decorative Grid Lines (Optional subtle texture) */}
+        <div className="absolute inset-0 opacity-10 pointer-events-none"></div>
+
+        <motion.div
+          variants={containervarients}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.5 }}
+          className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10"
+        >
+          {/* --- LEFT COLUMN --- */}
+          <motion.div
+            variants={leftColumn}
+            className="lg:col-span-4 flex flex-col gap-6"
+          >
+            {leftSectionData.map((item) => (
+              <div
+                key={item.id}
+                className={`   relative rounded-2xl   backdrop-blur-md transition-all
+                  ${
+                    item.type === "problem"
+                      ? "bg-white/30 border border-white/50 shadow-lg w-[324px] h-[120px] rounded-xl p-4"
+                      : "bg-[linear-gradient(111deg,rgba(255,255,255,0.4)_-8.95%,rgba(255,255,255,0.01)_114%)] p-5 rounded-[10px] hover:bg-white/30 w-[270px] h-[100px] backdrop-blur-[50px]"
+                  }
+                `}
+              >
+                {/* Brand Card Specifics */}
+                {item.type === "brand" && (
+                  <div className="flex items-center gap-3 ">
+                    <div className="h-12 w-12 bg-white rounded-full flex items-center justify-center shadow-sm shrink-0">
+                      <Image
+                        src="/images/projectcards/chemco.png"
+                        alt="sideshade"
+                        width={120}
+                        height={60}
+                      />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <p className="  text-black  font-[Bw_Gradual_DEMO]  text-[18px] font-medium ">
+                          {item.title}
+                        </p>
+                      </div>
+                      <p className="  text-[#1E2F40] font-['Nunito_Sans'] text-[11px] font-normal leading-[14px]">
+                        {item.subtitle}
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Problem Card Specifics */}
+                {item.type === "problem" && (
+                  <>
+                    <div className="relative flex items-center mb-3">
+                      <h3 className="absolute left-1/2 -translate-x-1/2 text-black font-bw text-[21.6px] font-medium text-center">
+                        {item.title}
+                      </h3>
+
+                      <span className="ml-auto">
+                        <AlertTriangle className="w-5 h-5 text-red-600 fill-red-100" />
+                      </span>
+                    </div>
+
+                    <div className="rounded-[9.6px] w-[292.8px] text-center  bg-[radial-gradient(134.67%_514.17%_at_50%_-290.17%,#C9FD74_0%,rgba(255,255,255,0)_100%)] p-3">
+                      <p className="  text-[#1E2F40] font-nunito text-[19.2px] font-medium  leading-[19.2px]">
+                        {item.content}
+                      </p>
+                    </div>
+                  </>
+                )}
+
+                {/* Industry Card Specifics */}
+                {item.type === "industry" && (
+                  <div className="w-[270px] h-[100px]">
+                    <h3
+                      className="text-[#000] text-center font-['Bw_Gradual_DEMO'] text-[18px] font-medium 
+"
+                    >
+                      {item.title}
+                    </h3>
+                    <div className="flex ">
+                      <p className="text-[#1E2F40] w-[196px] h-[35px] text-start px-0 font-['Nunito_Sans'] text-[11px] font-normal leading-[14px]">
+                        {item.content}
+                      </p>
+                      <div className="h-10 w-10 bg-blue-500/80 rounded-lg flex items-center justify-center shrink-0">
+                        <Image
+                          src="/images/projectcards/medicplus.png"
+                          alt="sideshade"
+                          width={66}
+                          height={66}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))}
+          </motion.div>
+
+          {/* --- CENTER COLUMN (Tech Stack) --- */}
+          <motion.div
+            variants={centerColumn}
+            className="lg:col-span-4 relative h-[400px] flex items-center justify-center"
+          >
+            {/* Connecting Lines (Left and Right) */}
+            <div className="hidden lg:block absolute left-0 top-1/2 w-[33px] h-[1px] bg-white/40 -translate-x-full" />
+            <div className="hidden lg:block absolute right-0 top-1/2 w-12 h-[1px] bg-white/40 translate-x-full" />
+
+            {/* Central Glass Box */}
+            <div className="relative w-full h-full border rounded-[25px] bg-[linear-gradient(111deg,rgba(255,255,255,0.4)_-8.95%,rgba(255,255,255,0.01)_114%)] backdrop-blur-[50px] flex items-center justify-center">
+              {/* Tech Icons (Orbiting) */}
+              {techStackData.map((tech) => (
+                <div key={tech.id} className={`absolute ${tech.position} `}>
+                  <div className="">{tech.icon}</div>
+                </div>
+              ))}
+
+              {/* Center Core Icon */}
+              <div className="relative z-10 bg-white rounded-3xl p-6 shadow-2xl w-28 h-28 flex items-center justify-center">
+                <span>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="72"
+                    height="72"
+                    viewBox="0 0 72 72"
+                    fill="none"
+                  >
+                    <g filter="url(#filter0_d_1264_1063)">
+                      <path
+                        d="M52.692 58.7044C47.7993 61.7706 42.0119 63.544 35.8097 63.544C18.2417 63.544 4 49.3192 4 31.772C4 21.4939 8.88609 12.3555 16.4649 6.54817L52.692 58.7044Z"
+                        fill="url(#paint0_linear_1264_1063)"
+                      />
+                      <path
+                        d="M67.545 33.9518C66.971 42.4134 63.0806 49.966 57.1611 55.3232L41.8133 33.2268L67.545 33.9518Z"
+                        fill="url(#paint1_linear_1264_1063)"
+                      />
+                      <path
+                        d="M50.1737 3.41667C59.5586 8.1689 66.2658 17.4321 67.4363 28.3503L41.2831 27.6135L50.1737 3.41667Z"
+                        fill="url(#paint2_linear_1264_1063)"
+                      />
+                      <path
+                        d="M35.8097 0C38.9946 0 42.07 0.46796 44.9712 1.33801L36.2154 25.1675L21.1963 3.54426C25.5721 1.2797 30.5412 0 35.8097 0Z"
+                        fill="url(#paint3_linear_1264_1063)"
+                      />
+                    </g>
+                    <defs>
+                      <filter
+                        id="filter0_d_1264_1063"
+                        x="0"
+                        y="0"
+                        width="71.5449"
+                        height="71.5439"
+                        filterUnits="userSpaceOnUse"
+                        color-interpolation-filters="sRGB"
+                      >
+                        <feFlood
+                          flood-opacity="0"
+                          result="BackgroundImageFix"
+                        />
+                        <feColorMatrix
+                          in="SourceAlpha"
+                          type="matrix"
+                          values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+                          result="hardAlpha"
+                        />
+                        <feOffset dy="4" />
+                        <feGaussianBlur stdDeviation="2" />
+                        <feComposite in2="hardAlpha" operator="out" />
+                        <feColorMatrix
+                          type="matrix"
+                          values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0"
+                        />
+                        <feBlend
+                          mode="normal"
+                          in2="BackgroundImageFix"
+                          result="effect1_dropShadow_1264_1063"
+                        />
+                        <feBlend
+                          mode="normal"
+                          in="SourceGraphic"
+                          in2="effect1_dropShadow_1264_1063"
+                          result="shape"
+                        />
+                      </filter>
+                      <linearGradient
+                        id="paint0_linear_1264_1063"
+                        x1="4"
+                        y1="31.4215"
+                        x2="80.3343"
+                        y2="75.3855"
+                        gradientUnits="userSpaceOnUse"
+                      >
+                        <stop stop-color="#054FF3" />
+                        <stop offset="0.423077" stop-color="#388EFF" />
+                        <stop offset="1" stop-color="#1E73F3" />
+                      </linearGradient>
+                      <linearGradient
+                        id="paint1_linear_1264_1063"
+                        x1="4"
+                        y1="31.4215"
+                        x2="80.3343"
+                        y2="75.3855"
+                        gradientUnits="userSpaceOnUse"
+                      >
+                        <stop stop-color="#054FF3" />
+                        <stop offset="0.423077" stop-color="#388EFF" />
+                        <stop offset="1" stop-color="#1E73F3" />
+                      </linearGradient>
+                      <linearGradient
+                        id="paint2_linear_1264_1063"
+                        x1="4"
+                        y1="31.4215"
+                        x2="80.3343"
+                        y2="75.3855"
+                        gradientUnits="userSpaceOnUse"
+                      >
+                        <stop stop-color="#054FF3" />
+                        <stop offset="0.423077" stop-color="#388EFF" />
+                        <stop offset="1" stop-color="#1E73F3" />
+                      </linearGradient>
+                      <linearGradient
+                        id="paint3_linear_1264_1063"
+                        x1="4"
+                        y1="31.4215"
+                        x2="80.3343"
+                        y2="75.3855"
+                        gradientUnits="userSpaceOnUse"
+                      >
+                        <stop stop-color="#054FF3" />
+                        <stop offset="0.423077" stop-color="#388EFF" />
+                        <stop offset="1" stop-color="#1E73F3" />
+                      </linearGradient>
+                    </defs>
+                  </svg>
+                </span>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* --- RIGHT COLUMN --- */}
+          <motion.div
+            variants={rightColumn}
+            className="lg:col-span-4 flex flex-col justify-start gap-8 pl-4"
+          >
+            {resultsData.map((result) => (
+              <div
+                key={result.id}
+                className={`
+                   transition-all duration-300 p-6 rounded-2xl
+                   ${
+                     result.isActive
+                       ? "rounded-[12.273px_11.782px_11.782px_11.782px] border border-white bg-[radial-gradient(134.67%_514.17%_at_50%_-290.17%,rgba(201,253,116,0.5)_0%,rgba(255,255,255,0)_100%)]"
+                       : "w-[264px] h-[97px] rounded-[10px] bg-[linear-gradient(111deg,rgba(255,255,255,0.4)_-8.95%,rgba(255,255,255,0.01)_114%)] backdrop-blur-[50px]"
+                   }
+                `}
+              >
+                <h3 className="text-[#000] text-center font-['Poppins'] text-[18.409px] font-semibold leading-[19.636px]">
+                  {result.title}
+                </h3>
+                <div className="flex items-start gap-2 pt-1">
+                  <span className="pt-1">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="13"
+                      height="13"
+                      viewBox="0 0 13 13"
+                      fill="none"
+                    >
+                      <g filter="url(#filter0_d_1264_1079)">
+                        <ellipse
+                          cx="6.13593"
+                          cy="4.93888"
+                          rx="3.68183"
+                          ry="3.71134"
+                          fill="url(#paint0_radial_1264_1079)"
+                        />
+                      </g>
+                      <defs>
+                        <filter
+                          id="filter0_d_1264_1079"
+                          x="-0.000449657"
+                          y="0.000263453"
+                          width="12.2724"
+                          height="12.332"
+                          filterUnits="userSpaceOnUse"
+                          color-interpolation-filters="sRGB"
+                        >
+                          <feFlood
+                            flood-opacity="0"
+                            result="BackgroundImageFix"
+                          />
+                          <feColorMatrix
+                            in="SourceAlpha"
+                            type="matrix"
+                            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+                            result="hardAlpha"
+                          />
+                          <feOffset dy="1.22728" />
+                          <feGaussianBlur stdDeviation="1.22728" />
+                          <feComposite in2="hardAlpha" operator="out" />
+                          <feColorMatrix
+                            type="matrix"
+                            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.4 0"
+                          />
+                          <feBlend
+                            mode="normal"
+                            in2="BackgroundImageFix"
+                            result="effect1_dropShadow_1264_1079"
+                          />
+                          <feBlend
+                            mode="normal"
+                            in="SourceGraphic"
+                            in2="effect1_dropShadow_1264_1079"
+                            result="shape"
+                          />
+                        </filter>
+                        <radialGradient
+                          id="paint0_radial_1264_1079"
+                          cx="0"
+                          cy="0"
+                          r="1"
+                          gradientTransform="matrix(4.9091 4.94845 -4.9091 4.94845 4.29501 3.08321)"
+                          gradientUnits="userSpaceOnUse"
+                        >
+                          <stop stop-color="#588CFF" />
+                          <stop offset="1" stop-color="#032E8D" />
+                        </radialGradient>
+                      </defs>
+                    </svg>
+                  </span>
+                  <p
+                    className={`
+                      ${
+                        result.isActive
+                          ? " text-[17.182px] text-[#1E2F40] font-['Nunito_Sans']  font-normal leading-[19.636px]"
+                          : " text-[#1E2F40] font-['Nunito_Sans'] text-[14px] font-normal leading-[16px]"
+                      }
+                    `}
+                  >
+                    {result.content}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </motion.div>
+        </motion.div>
+      </div>
+    </div>
+  );
+}
+
+export default function ProjectsCards() {
+  return (
+    <div className="min-h-screen bg-gray-100 p-8">
+      {projectsData.map((project) => (
+        <ProjectCard
+          key={project.id}
+          leftSectionData={project.leftSectionData}
+          resultsData={project.resultsData}
+        />
+      ))}
+    </div>
+  );
+}
